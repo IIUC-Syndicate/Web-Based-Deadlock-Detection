@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deadlock Detector</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-gray-800 p-4 flex items-center">
+    <button onclick="goHome()" class="text-2xl font-mono tracking-widest">
+      ＤＥＡＤＬＯＣＫ ＤＥＴＥＣＴＯＲ
+    </button>
+    <button id="back-btn"
+            class="ml-auto bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded hidden">
+      Back
+    </button>
+  </nav>
+
+  <!-- Main App Container -->
+  <div id="app" class="flex-grow flex items-center justify-center p-6">
+
+    <!-- Home Screen -->
+    <div id="home" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+      <div class="p-8 bg-gray-800 rounded-xl shadow-lg cursor-pointer hover:bg-gray-700"
+           onclick="showSection('single')">
+        <h2 class="text-2xl font-bold mb-2">Single Instance</h2>
+        <p class="text-gray-400">Detect deadlocks via Resource Allocation Graph cycles.</p>
+      </div>
+      <div class="p-8 bg-gray-800 rounded-xl shadow-lg cursor-pointer hover:bg-gray-700"
+           onclick="showSection('multi')">
+        <h2 class="text-2xl font-bold mb-2">Multi Instance</h2>
+        <p class="text-gray-400">Detect deadlocks via matrices (Banker’s logic).</p>
+      </div>
+    </div>
+
+    <!-- Single Instance Section -->
+    <div id="single" class="hidden w-full max-w-3xl bg-gray-800 p-8 rounded-xl shadow-lg space-y-4">
+      <h3 class="text-2xl font-semibold">Single Instance Resource</h3>
+      <div>
+        <label class="block text-sm text-gray-300">Processes (comma-separated)</label>
+        <input id="si-processes" type="text" placeholder="p1,p2"
+               class="mt-1 w-full bg-transparent border border-gray-600 rounded px-3 py-2  focus:outline-none focus:border-indigo-400" />
+      </div>
+      <div>
+        <label class="block text-sm text-gray-300">Resources (comma-separated)</label>
+        <input id="si-resources" type="text" placeholder="r1, r2"
+               class="mt-1 w-full bg-transparent border border-gray-600 rounded px-3 py-2 placeholder-gray-500 focus:outline-none focus:border-indigo-400" />
+      </div>
+      <div id="si-edges" class="space-y-2"></div>
+      <div class="flex space-x-4">
+        <button onclick="addEdgeRow()"
+                class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded transition">
+          Add Edge
+        </button>
+        <button onclick="checkSingle()"
+                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded transition">
+          Check Deadlock
+        </button>
+      </div>
+    </div>
+
+    <!-- Multi Instance Section -->
+    <div id="multi" class="hidden w-full max-w-3xl bg-gray-800 p-8 rounded-xl shadow-lg space-y-4">
+      <h3 class="text-2xl font-semibold">Multi Instance Resource</h3>
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm text-gray-300"># Processes</label>
+          <input id="mi-n" type="number" value="3" min="1"
+                 class="mt-1 w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-indigo-400" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300"># Resources</label>
+          <input id="mi-m" type="number" value="2" min="1"
+                 class="mt-1 w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-indigo-400" />
+        </div>
+      </div>
+      <button onclick="buildMatrices()"
+              class="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded transition">
+        Generate Matrices
+      </button>
+      <div id="mi-matrices"></div>
+      <button id="mi-check-btn" onclick="checkMulti()"
+              class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded transition hidden">
+        Check Deadlock
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Modal Popup -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden">
+    <div class="bg-gray-800 rounded-lg p-6 max-w-sm w-full text-center space-y-4">
+      <div id="modal-content" class="text-lg"></div>
+      <button onclick="closeModal()"
+              class="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded transition">
+        OK
+      </button>
+    </div>
+  </div>
+
+  <script src="src/main.js"></script>
+</body>
+</html>
