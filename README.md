@@ -2,9 +2,9 @@
 
 Live: https://iiuc-syndicate.github.io/Web-Based-Deadlock-Detection/
 
-Single Instance Example:
-Processes : p1,p2
-Resources : r1,r2
+Single Instance Example:<br>
+Processes : p1,p2<br>
+Resources : r1,r2<br>
 
 Req : p1 - r2
 req : p2 - r2
