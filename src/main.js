@@ -206,6 +206,10 @@ function detectCycle(procs, ress, edges) {
       if (result.indexOf(node) === -1) result.push(node);
     }
   }
+
+  result.sort(function(a,b){
+    return parseInt(a.slice(1)) - parseInt(b.slice(1));
+  })
   return result;
 }
 
