@@ -94,11 +94,11 @@ function addEdgeRow() {
 
   sel.onchange = function() {
     if (sel.value === 'request') {
-      fromIn.placeholder = 'Process (e.g. P1)';
-      toIn.placeholder = 'Resource (e.g. R1)';
+      fromIn.placeholder = 'From';
+      toIn.placeholder = 'To';
     } else {
-      fromIn.placeholder = 'Resource (e.g. R1)';
-      toIn.placeholder = 'Process (e.g. P1)';
+      fromIn.placeholder = 'From';
+      toIn.placeholder = 'To';
     }
   };
 
