@@ -91,7 +91,7 @@
   </div>
 
   <!-- Modal Popup -->
-  <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden">
+  <!-- <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden">
     <div class="bg-gray-800 rounded-lg p-6 max-w-sm w-full text-center space-y-4">
       <div id="modal-content" class="text-lg"></div>
       <button onclick="closeModal()"
@@ -99,8 +99,19 @@
         OK
       </button>
     </div>
+  </div> -->
+
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden">
+    <div class="bg-gray-800 rounded-lg p-6 max-w-3xl w-full text-center space-y-4">
+      <div id="modal-content" class="text-lg"></div>
+      <div id="graph-container" class="w-full h-96"></div>
+      <button onclick="closeModalAndClearGraph()" class="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded transition">
+        OK
+      </button>
+    </div>
   </div>
 
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <script src="src/main.js"></script>
 </body>
 </html>

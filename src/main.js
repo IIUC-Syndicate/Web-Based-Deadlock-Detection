@@ -44,11 +44,25 @@ function showModal(html) {
   content.innerHTML = html;
   modal.classList.remove('hidden');
 }
-function closeModal() {
-  var modal = document.getElementById('modal');
-  if (!modal) return;
-  modal.classList.add('hidden');
+// function closeModal() {
+//   var modal = document.getElementById('modal');
+//   if (!modal) return;
+//   modal.classList.add('hidden');
+// }
+function closeModalAndClearGraph() {
+  
+  if (network) {
+    network.destroy();
+    network = null;
+  }
+  
+  const container = document.getElementById('graph-container');
+  if (container) container.innerHTML = '';
+
+  const modal = document.getElementById('modal');
+  if (modal) modal.classList.add('hidden');
 }
+
 
 //  Single-instance Input 
 var edgeCount = 0;
@@ -207,10 +221,14 @@ function detectCycle(procs, ress, edges) {
     }
   }
 
+  drawGraphInModal(nodes, edges, result);
+
   result.sort(function(a,b){
     return parseInt(a.slice(1)) - parseInt(b.slice(1));
   })
   return result;
+
+  
 }
 
 function checkSingle() {
@@ -406,5 +424,58 @@ function detectMulti(available, allocation, request) {
   return result;
 }
 
+let network = null;  // global network variable
+
+
+function drawGraphInModal(nodes, edges, result) {
+
+  const visNodes = nodes.map(nodeId => ({
+  id: nodeId,
+  label: nodeId,
+  shape: 'ellipse',
+  color: result.includes(nodeId) ? '#dc2626' : '#ffffff'  // red if deadlocked, else white
+  }));
+
+
+  // Convert edges to vis.js format
+  const visEdges = edges.map(e => ({
+    from: e.from.trim(),
+    to: e.to.trim(),
+    color: e.type === "request" ? { color: "white" } : { color: "white" },
+    arrows: "to"
+  }));
+
+  // Create DataSets
+  const nodesDataset = new vis.DataSet(visNodes);
+  const edgesDataset = new vis.DataSet(visEdges);
+
+  // Create network in modal container
+  const container = document.getElementById("graph-container");
+  const data = { nodes: nodesDataset, edges: edgesDataset };
+  const options = {
+    autoResize: true,
+    physics: {
+      enabled: true,
+      stabilization: { iterations: 200 }
+    },
+    layout: {
+      improvedLayout: true
+    },
+    edges: {
+      smooth: true
+    }
+  };
+
+  network = new vis.Network(container, data, options);
+
+
+  setTimeout(() => {
+    network.fit();
+  }, 100);
+
+
+  // Show the modal
+  document.getElementById("modal").classList.remove("hidden");
+}
 
 goHome();
