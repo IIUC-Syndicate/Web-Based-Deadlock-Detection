@@ -50,7 +50,7 @@ function showModal(html) {
 //   modal.classList.add('hidden');
 // }
 function closeModalAndClearGraph() {
-  
+
   if (network) {
     network.destroy();
     network = null;
@@ -372,7 +372,9 @@ function checkMulti() {
   }
 
   // run detection
-  var dead = detectMulti(avail, allocation, request);
+  var anir = detectMulti(avail, allocation, request);
+  var dead = anir.result;
+  var sequence = anir.sequence;
   if (dead.length > 0) {
     showModal(
       '<p class="text-red-400 font-bold text-xl">Deadlocked Processes:</p>' +
@@ -380,6 +382,8 @@ function checkMulti() {
     );
   } else {
     showModal('<p class="text-green-400 font-bold text-xl">No Deadlock Found.</p>');
+
+    drawPSG(sequence);
   }
 }
 
@@ -401,6 +405,8 @@ function detectMulti(available, allocation, request) {
   }
 
   var progress = true;
+  var sequence = [];
+
   while (progress) {
     progress = false;
     for (var i = 0; i < n; i++) {
@@ -412,6 +418,7 @@ function detectMulti(available, allocation, request) {
       if (can) {
         for (var j = 0; j < m; j++) work[j] += allocation[i][j];
         finish[i] = true;
+        sequence.push('P' + (i + 1));
         progress = true;
       }
     }
@@ -421,7 +428,7 @@ function detectMulti(available, allocation, request) {
   for (var i = 0; i < n; i++) {
     if (!finish[i]) result.push('P' + (i + 1));
   }
-  return result;
+  return {result,sequence};
 }
 
 let network = null;  // global network variable
@@ -433,7 +440,7 @@ function drawGraphInModal(nodes, edges, result) {
   id: nodeId,
   label: nodeId,
   shape: 'ellipse',
-  color: result.includes(nodeId) ? '#dc2626' : '#ffffff'  // red if deadlocked, else white
+  color: result.includes(nodeId) ? '#dc2626' : '#ffffffff'
   }));
 
 
@@ -441,7 +448,7 @@ function drawGraphInModal(nodes, edges, result) {
   const visEdges = edges.map(e => ({
     from: e.from.trim(),
     to: e.to.trim(),
-    color: e.type === "request" ? { color: "white" } : { color: "white" },
+    color: { color: "white" },
     arrows: "to"
   }));
 
@@ -476,6 +483,51 @@ function drawGraphInModal(nodes, edges, result) {
 
   // Show the modal
   document.getElementById("modal").classList.remove("hidden");
+}
+
+
+function drawPSG(sequence) {
+  if (!sequence || sequence.length === 0) return;
+
+  const nodes = sequence.map(proc => ({
+    id: proc,
+    label: proc,
+    shape: 'ellipse',
+    color: '#3b82f6'  
+  }));
+
+  const edges = [];
+  for (let i = 0; i < sequence.length - 1; i++) {
+    edges.push({
+      from: sequence[i],
+      to: sequence[i + 1],
+      arrows: 'to',
+      color: '#2563eb',
+      smooth: { type: 'cubicBezier' }
+    });
+  }
+
+  const data = {
+    nodes: new vis.DataSet(nodes),
+    edges: new vis.DataSet(edges)
+  };
+
+  const options = {
+    nodes: {
+      font: { size: 18, color: '#fff' }
+    },
+    edges: {
+      font: { align: 'top' },
+      smooth: true
+    },
+    physics: false
+  };
+
+  const container = document.getElementById('graph-container');
+  if (!container) return;
+
+  network = new vis.Network(container, data, options);
+
 }
 
 goHome();
